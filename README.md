@@ -3,12 +3,13 @@ A hypothetical software system for the New York Public Library to import, store,
 
 ## Phase 1
 The system is built with the following structure:
+
 Journal
-    - name
-    - publisher
-    - ISSN number
-    - Articles (ArrayList) (must have at least one article)
-    - .isFullIssue() → wether the journal has more than 2 articles
+- name
+- publisher
+- ISSN
+- articles
+- .isFullIssue() → wether the journal has more than 2 articles
 Publisher
     - name
     - location
