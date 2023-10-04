@@ -1,7 +1,12 @@
 package org.nypl.journalsystem;
 import java.util.ArrayList;
+import java.util.Collection;
 
-public class Journal {
+import org.nypl.journalsystem.core.IArticle;
+import org.nypl.journalsystem.core.IJournal;
+import org.nypl.journalsystem.core.IPublisher;
+
+public class Journal implements IJournal{
 	
 	String name;
 	Publisher publisher;
@@ -28,6 +33,30 @@ public class Journal {
 		} else {
 			return "\"" + name + "\" (not full issue), articles="+ articles;	
 		}
+	}
+
+	@Override
+	public Collection<? extends IArticle> getArticles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getIssn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPublisher getPublisher() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

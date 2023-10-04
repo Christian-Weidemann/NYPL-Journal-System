@@ -1,6 +1,8 @@
 package org.nypl.journalsystem;
 
-public class Author {
+import org.nypl.journalsystem.core.IAuthor;
+
+public class Author implements IAuthor{
 	
 	@Override
 	public String toString() {
@@ -12,6 +14,12 @@ public class Author {
 	public Author(String name) {
 		super();
 		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -4,12 +4,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.nypl.journalsystem.core.IArticle;
+import org.nypl.journalsystem.core.IAuthor;
+import org.nypl.journalsystem.core.IJournal;
+import org.nypl.journalsystem.core.ILibrarySystem;
 
-public class LibrarySystem {
+public class LibrarySystem implements ILibrarySystem{
 	
 	HashMap<String, Journal> journals;  //	Journals stored in HashMap by ISSN number.
 	
@@ -80,5 +85,35 @@ public class LibrarySystem {
 		
 		librarySystem.load();
 		librarySystem.listContents();
+	}
+
+	@Override
+	public Collection<? extends IAuthor> getAllAuthors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<? extends IJournal> getAllJournals() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<? extends IArticle> getArticlesByAuthor(IAuthor arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<? extends IArticle> getArticlesCitedByArticle(IArticle arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<? extends IArticle> getArticlesCitingArticle(IArticle arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
