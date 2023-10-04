@@ -7,17 +7,17 @@ Articles also contain information about their citations, enabling cross referenc
 
 Hirsh-Index is a metric to measure a researcher’s impact. Data on journals and articles is imported from CSV text files. 
 
-- Journal
+Journal
     - name
     - publisher
     - ISSN number
     - Articles (ArrayList) (must have at least one article)
     - .isFullIssue() → wether the journal has more than 2 articles
-- Publisher
+Publisher
     - name
     - location
-- Article
+Article
     - title
     - authors (ArrayList) (at least one author)
-- Author
+Author
     - name
