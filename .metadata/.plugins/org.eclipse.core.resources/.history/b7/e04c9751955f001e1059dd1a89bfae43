@@ -1,0 +1,91 @@
+package org.nypl.journalsystem;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
+public class LibrarySystem {
+	
+	//	Stores all journals in HashMap as ISSN : Journal.
+	HashMap<String, Journal> journals = new HashMap<String, Journal>();
+	
+	// Stores all authors in HashMap as ID : Author.
+	HashMap<String, Author> authors = new HashMap<String, Author>();
+	
+	public LibrarySystem() {
+		//Initialize system with default journals.
+		this.journals.put("0018-1560", new Journal("Higher Education", new Publisher("Springer", "Germany"), "0018-1560", new ArrayList<Article>()));
+		this.journals.put("0346-2511", new Journal("System", new Publisher("Elsevier", "Netherlands"), "0346-2511", new ArrayList<Article>()));
+		this.journals.put("2451-9294", new Journal("Chem", new Publisher("Elsevier", "Netherlands"), "2451-9294", new ArrayList<Article>()));
+		this.journals.put("1476-4687", new Journal("Nature", new Publisher("Nature Research", "Great Britain"), "1476-4687", new ArrayList<Article>()));
+		this.journals.put("0147-2011", new Journal("Society", new Publisher("Springer", "Germany"), "0147-2011", new ArrayList<Article>()));
+	}
+	
+	public void load() throws FileNotFoundException, IOException {
+		loadAuthors();
+		loadArticles();
+	}
+	
+	protected void loadAuthors() throws FileNotFoundException, IOException {
+		/*
+		 *	Loads author names from file and saves them in "author_map" as ID : Name.
+		 */
+//		Iterable<CSVRecord> records = CSVFormat.DEFAULT
+//												.withIgnoreSurroundingSpaces()
+//												.withHeader("ID", "Name")
+//												.parse(new FileReader("data/Authors.csv"));
+		CSVFormat format = CSVFormat.EXCEL.withIgnoreSurroundingSpaces().withHeader();
+		CSVParser parser = CSVParser.parse(new FileReader("data/Authors.csv"), format);
+		
+		for (CSVRecord record : parser) {
+			authors.put(record.get("ID"), new Author(record.get("Name")));
+		}
+		System.out.println(this.authors.values().toString());
+	}
+	
+	protected void loadArticles() throws FileNotFoundException, IOException {
+		/*
+		 *	Loads articles from file and assign them to appropriate journal
+		 */
+//		Iterable<CSVRecord> records = CSVFormat.DEFAULT
+//												.withIgnoreSurroundingSpaces()
+//												.withHeader("ID", "Title", "AuthorIDs", "ISSN")
+//												.parse(new FileReader("data/Articles.csv"));
+		CSVFormat format = CSVFormat.EXCEL.withIgnoreSurroundingSpaces().withHeader();
+		CSVParser parser = CSVParser.parse(new FileReader("data/Articles.csv"), format);
+		
+		for (CSVRecord record : parser) {
+			System.out.println(record);
+			
+			Article newArticle = new Article(record.get("Title"), new ArrayList<Author>());
+			
+			// IDs of article authors
+			String[] authorIDs = record.get("AuthorIDs").split(";");
+			
+			// Add authors to new article
+			for (String authorID : authorIDs) {
+				Author newAuthor = this.authors.get(authorID);
+				newArticle.authors.add(newAuthor);
+			}
+			// Add new article to the corresponding journal
+			journals.get(record.get("ISSN")).articles.add(newArticle);
+		}
+	}
+	
+	
+	public void listContents() {
+		//TODO: Print all journals with their respective articles and authors to the console.
+	}
+	
+	public static final void main(String[] args) throws Exception {
+		LibrarySystem librarySystem = new LibrarySystem();
+		
+		librarySystem.load();
+		librarySystem.listContents();
+	}
+}

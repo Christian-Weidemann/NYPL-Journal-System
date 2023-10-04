@@ -1,0 +1,143 @@
+package org.nypl.journalsystem;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.nypl.journalsystem.core.IArticle;
+import org.nypl.journalsystem.core.IAuthor;
+import org.nypl.journalsystem.core.IJournal;
+import org.nypl.journalsystem.core.ILibrarySystem;
+
+public class LibrarySystem implements ILibrarySystem {
+	
+	HashMap<String, Journal> systemJournals;  //	Journals stored in HashMap by ISSN number.
+	HashMap<String, Article> systemArticles;  //	Articles stored in HashMap by ID.
+	HashMap<String, Author> systemAuthors;    //	Authors stored in HashMap by ID.
+	
+	public LibrarySystem() {
+		/*
+		 *	Initializes system with default journals.
+		 */
+		this.systemJournals = new HashMap<String, Journal>();
+		this.systemArticles = new HashMap<String, Article>();
+		this.systemAuthors = new HashMap<String, Author>();
+		
+		systemJournals.put("0018-1560", new Journal("Higher Education", new Publisher("Springer", "Germany"), "0018-1560", new ArrayList<Article>()));
+		systemJournals.put("0346-2511", new Journal("System", new Publisher("Elsevier", "Netherlands"), "0346-2511", new ArrayList<Article>()));
+		systemJournals.put("2451-9294", new Journal("Chem", new Publisher("Elsevier", "Netherlands"), "2451-9294", new ArrayList<Article>()));
+		systemJournals.put("1476-4687", new Journal("Nature", new Publisher("Nature Research", "Great Britain"), "1476-4687", new ArrayList<Article>()));
+		systemJournals.put("0147-2011", new Journal("Society", new Publisher("Springer", "Germany"), "0147-2011", new ArrayList<Article>()));
+	}
+	
+	public void load() throws FileNotFoundException, IOException {
+		CSVFormat format = CSVFormat.EXCEL.withIgnoreSurroundingSpaces().withHeader();
+		loadAuthors("data/Authors.csv", format);
+		loadArticles("data/Articles.csv", format);
+	}
+	
+	protected void loadAuthors(String path, CSVFormat format) throws FileNotFoundException, IOException {
+		/*
+		 *	Loads author names from file and saves them in "author_map" as ID : Name.
+		 */
+		
+		CSVParser parser = CSVParser.parse(new FileReader(path), format);
+		
+		for (CSVRecord record : parser) {
+			systemAuthors.put(record.get("ID"), new Author(record.get("Name")));
+		}
+	}
+	
+	protected void loadArticles(String path, CSVFormat format) throws FileNotFoundException, IOException {
+		/*
+		 *	Loads articles from file and assign them to appropriate journal
+		 */
+		CSVParser parser = CSVParser.parse(new FileReader(path), format);
+		
+		HashMap<String, String[]> citationIDs = new HashMap<String, String[]>();
+		
+		for (CSVRecord record : parser) {
+			
+			String citationString = record.get("CitedArticleIDs");
+			String[] articleCitationIDs = citationString.substring(1, citationString.length()-1).split(";");
+			citationIDs.put(record.get("ID"), articleCitationIDs);
+			
+			Article newArticle = new Article(record.get("Title"), new ArrayList<Author>(), new ArrayList<Article>());
+			
+			String authorsString =  record.get("AuthorIDs");
+			String[] authorIDs = authorsString.substring(1, authorsString.length()-1).split("; ");
+			for (String authorID : authorIDs) {
+				newArticle.addAuthor(systemAuthors.get(authorID));
+			}
+			systemArticles.put(record.get("ID"), newArticle);
+			systemJournals.get(record.get("ISSN")).addArticle(newArticle);
+		}
+		
+		// Add cited articles (by their ID) to each article
+		for (String currID : citationIDs.keySet()) {
+			for (String citID : citationIDs.get(currID)) {
+				systemArticles.get(currID).addCitation
+
+			}
+		}
+	}
+	
+	public void listContents() {
+		/*
+		 *	Prints all journals with their respective articles and authors to the console.
+		 */
+		for (Journal journal : systemJournals.values()) {
+			System.out.println(journal);
+		}
+	}
+	
+	public static final void main(String[] args) throws Exception {
+		LibrarySystem librarySystem = new LibrarySystem();
+		
+		librarySystem.load();
+		librarySystem.listContents();
+	}
+
+	@Override
+	public Collection<? extends IAuthor> getAllAuthors() {
+		return systemAuthors.values();
+	}
+
+	@Override
+	public Collection<? extends IJournal> getAllJournals() {
+		return systemJournals.values();
+	}
+
+	@Override
+	public Collection<Article> getArticlesByAuthor(IAuthor arg0) {
+		ArrayList<Article> articlesByAuthor = new ArrayList<Article>();
+		
+		for (Article article : systemArticles.values()) {
+			if (article.getAuthors().contains(arg0)) {
+				articlesByAuthor.add(article);
+			}
+		}
+		return articlesByAuthor;
+	}
+
+	@Override
+	public Collection<Article> getArticlesCitedByArticle(IArticle arg0) {
+		return ((Article) arg0).getCitedArticles();
+	}
+
+	@Override
+	public Collection<Article> getArticlesCitingArticle(IArticle arg0) {
+		ArrayList<Article> citingArticles = new ArrayList<Article>();
+		for (Article article : systemArticles.values()) {
+			if (article.citedArticles.contains(arg0) ) {
+				citingArticles.add(article);
+			}
+		}
+		return citingArticles;
+	}
+}
