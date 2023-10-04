@@ -1,6 +1,5 @@
 package org.nypl.journalsystem;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.nypl.journalsystem.core.IJournal;
 import org.nypl.journalsystem.core.IPublisher;
