@@ -18,8 +18,7 @@ public class Author implements IAuthor{
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 }
