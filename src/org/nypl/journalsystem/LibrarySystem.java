@@ -11,7 +11,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.nypl.journalsystem.core.IArticle;
 import org.nypl.journalsystem.core.IAuthor;
-import org.nypl.journalsystem.core.IJournal;
 import org.nypl.journalsystem.core.ILibrarySystem;
 
 public class LibrarySystem implements ILibrarySystem{
@@ -134,8 +133,13 @@ public class LibrarySystem implements ILibrarySystem{
 	}
 
 	@Override
-	public Collection<? extends IArticle> getArticlesCitingArticle(IArticle arg0) {
-		
-		return null;
+	public ArrayList<Article> getArticlesCitingArticle(IArticle arg0) {
+		ArrayList<Article> ArticlesCitingArticle = new ArrayList<Article>();
+		for (Article citingArticle : systemArticles.values()) {
+			if (citingArticle.getCitedArticles().contains(arg0)) {
+				ArticlesCitingArticle.add(citingArticle);
+			}
+		}
+		return ArticlesCitingArticle;
 	}
 }
